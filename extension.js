@@ -11,36 +11,21 @@ const exec = util.promisify(require('child_process').exec);
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "local-ai-commit" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
 	const disposable = vscode.commands.registerCommand('local-ai-commit.helloWorld', async function () {
-		// The code you place here will be executed every time your command is executed
-		// await exec('PROVIDER=ollama');
 		process.env.PROVIDER = 'ollama';
 		const workspaceFolder = vscode.workspace.rootPath;
-
-		// Check if there are any uncommitted changes
 		const { stdout, stderr } = await exec('git diff --quiet', {
 			cwd: workspaceFolder,
 		});
-
 		if (stderr) {
 			const userChoice = await vscode.window.showInformationMessage('No git diff provided');
 			return;
 		}
-
 		const childPromise = exec('set PROVIDER=ollama && ai-commit', {
 			cwd: workspaceFolder,
 		});;
-
 		let output = '';
-		// Write data from PromiseResult as it appears
 		childPromise.child.stdout.on('data', (data) => {
 			output += data.toString();
 		});
@@ -51,14 +36,10 @@ function activate(context) {
 			console.log(childPromise.child.stdin.write(userInput));
 			childPromise.child.stdin.end();
 		}, 2000);
-
-		// console.log('ai-commit task output:', stdout);
-		// console.error('ai-commit task error:', stderr);
 	});
 
 	context.subscriptions.push(disposable);
 }
-
 
 function getProposedCommit(output) {
 	const startIndex = output.indexOf('Proposed Commit:');
@@ -71,11 +52,6 @@ function getProposedCommit(output) {
 	return output.slice(startIndex + 'Proposed Commit:'.length, endIndex).trim().replace(/^-+\n\s*/, '').replace(/\n-+$/, '').replace(/\n-+\n/, '\n');
 }
 
-// This method is called when your extension is deactivated
-function deactivate() { }
-
-
-
 function getWorkspaceFolder() {
 	const activeTextEditor = vscode.window.activeTextEditor;
 	if (!activeTextEditor) {
@@ -85,6 +61,9 @@ function getWorkspaceFolder() {
 	const workspaceFolder = vscode.workspace.getWorkspaceFolder(activeTextEditor.document.uri);
 	return workspaceFolder;
 }
+
+// This method is called when your extension is deactivated
+function deactivate() { }
 
 module.exports = {
 	activate,
