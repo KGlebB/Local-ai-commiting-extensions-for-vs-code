@@ -14,7 +14,7 @@
   "contributes": {
     "commands": [{
       "command": "local-ai-commit.helloWorld",
-      "title": "Hello World"
+      "title": "AI Commit"
     }]
   },
   "scripts": {
