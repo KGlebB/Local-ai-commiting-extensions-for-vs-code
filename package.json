@@ -12,10 +12,25 @@
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
-    "commands": [{
-      "command": "local-ai-commit.helloWorld",
-      "title": "AI Commit"
-    }]
+    "commands": [
+      {
+        "command": "local-ai-commit.helloWorld",
+        "title": "AI Commit",
+        "icon": {
+          "light": "./media/light.svg",
+          "dark": "./media/dark.svg"
+        }
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "when": "scmProvider == git",
+          "command": "local-ai-commit.helloWorld",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "lint": "eslint .",
